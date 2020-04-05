@@ -1,18 +1,21 @@
-import React from 'react';
-import { StyleSheet, Text, View ,Image,FlatList} from 'react-native';
+import React,{useEffect,useState}from 'react';
+import { StyleSheet, Text, View ,Image,FlatList,ActivityIndicator} from 'react-native';
 import {Card,FAB} from 'react-native-paper'
 const Home=({navigation})=>{
-     const data=[
-        {id:"1",name:"kshitij",email:"rk.jindal03@gmail.com",salary:"5 lpa",phone:"9719057015",picture:"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60",position:"gareeb aadmi"},
-        {id:"2",name:"kshitij",email:"ra.jindal03@gmail.com",salary:"5 lpa",phone:"9719057015",picture:"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60",position:"gareeb aadmi"},
-        {id:"3",name:"kshitij",email:"ka.jindal03@gmail.com",salary:"5 lpa",phone:"9719057015",picture:"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60",position:"gareeb aadmi"},
-        {id:"4",name:"kshitij",email:"pa.jindal03@gmail.com",salary:"5 lpa",phone:"9719057015",picture:"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60",position:"gareeb aadmi"}
-        
-        
-     ]
-     const renderList = ((item)=>{
+     const [data,setData]=useState([])
+     const[loading,setLoading]=useState(true)
+      useEffect(()=>{
+
+        fetch("http://d29d3d03.ngrok.io/")
+         .then(res=>res.json())
+         .then(results=>{
+             setData(results)
+             setLoading(false)
+         })
+      },[])
+          const renderList = ((item)=>{
           return(
-            <Card style={styles.mycard} key={item.id}
+            <Card style={styles.mycard} key={item._id}
             
             onPress={()=>navigation.navigate("Profile",{item})}
             
@@ -20,10 +23,10 @@ const Home=({navigation})=>{
             <View style={styles.cardView}>
             <Image
                 style ={{width:60,height:60,borderRadius:30}}
-            source={{uri:"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60"}}
+            source={{uri:item.picture}}
             />
             <View style={{marginLeft:10}}>
-          <Text style={styles.text}>{item.name}</Text>
+          <Text style={styles.text}>{item.Name}</Text>
           <Text style={styles.text}>{item.position}</Text>
             </View>
 
@@ -33,15 +36,18 @@ const Home=({navigation})=>{
      })
     return (
         <View style={{flex:1}}> 
-            <FlatList
-            data={data}
-            renderItem={({item})=>{
-                // console.log(item)
-                return  renderList(item)
-            }}
-                keyExtractor={item=>item.id}
-            />   
-             <FAB 
+        {loading?<ActivityIndicator size="large" color="#0000ff"/>
+        :
+        <FlatList
+        data={data}
+        renderItem={({item})=>{
+            // console.log(item)
+            return  renderList(item)
+        }}
+            keyExtractor={item=>item._id}
+        />   
+        }
+           <FAB 
              
              onPress={()=>navigation.navigate("Create")}
               style={styles.fab}

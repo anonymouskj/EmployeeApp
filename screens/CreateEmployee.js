@@ -1,10 +1,10 @@
 import React,{useState} from 'react';
-import { StyleSheet, Text, View ,Modal, Alert} from 'react-native';
+import { StyleSheet, Text, View ,Modal, Alert,Keyboard, KeyboardAvoidingView} from 'react-native';
 import {TextInput,Button} from 'react-native-paper'
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 
-const createEmployee = ()=>{
+const createEmployee = ({navigation})=>{
      const [Name,setName] = useState("")
      const [phone,setPhone] = useState("")
 const [email,setEmail] = useState("")
@@ -28,7 +28,8 @@ const submitData=()=>{
             position
           })
         }).then(res=>res.json()).then(data=>{
-          Alert.alert("save success")
+          Alert.alert(`${data.Name}  is saved successfully`)
+          navigation.navigate("Home")
         })
 }
 const pickFromGallery = async ()=>{
@@ -104,6 +105,7 @@ fetch("https://api.cloudinary.com/v1_1/anonymous-123/image/upload",{
 
 return(     
      <View style={styles.root}>
+       <KeyboardAvoidingView behavior="position">
      <TextInput
         label='Name'
         style={styles.inputStyle}
@@ -197,6 +199,7 @@ return(
            </Button>   
        </View>     
        </Modal>
+       </KeyboardAvoidingView>
   </View>
     )
 }

@@ -8,7 +8,7 @@ const Profile=(props)=>{
 
 
 
-      const {id,name,picture,phone,salary,email,position}=props.route.params.item
+      const {_id,Name,picture,phone,salary,email,position}=props.route.params.item
     const openDial=()=>{
         if(Platform.OS==="android"){
              Linking.openURL("tel:9719057015")
@@ -30,7 +30,7 @@ const Profile=(props)=>{
         />
     </View>
     <View style={{alignItems:"center",margin:15}}>
- <Title>{name}</Title>
+ <Title>{Name}</Title>
  <Text style={{fontSize:15}}>{position}</Text>
      </View>
      <Card  style={styles.myCard} onPress={()=>{
