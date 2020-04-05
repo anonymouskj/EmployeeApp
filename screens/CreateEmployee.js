@@ -9,10 +9,29 @@ const createEmployee = ()=>{
      const [phone,setPhone] = useState("")
 const [email,setEmail] = useState("")
 const [salary,setSalary] = useState("")
-const [dp,setdp] = useState("")
+const [picture,setpicture] = useState("")
+const [position,setPosition] = useState("")
 const [modal,setModal] = useState(false)
 
-const pickFromGallery = async()=>{
+const submitData=()=>{
+        fetch("http://d29d3d03.ngrok.io/send-data",{
+          method: "post",
+          headers:{
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify({
+            Name,
+            email,
+            phone,
+            picture,
+            salary,
+            position
+          })
+        }).then(res=>res.json()).then(data=>{
+          Alert.alert("save success")
+        })
+}
+const pickFromGallery = async ()=>{
        const{granted}= await Permissions.askAsync(Permissions.CAMERA_ROLL)
        if(granted){
              let data= await ImagePicker.launchImageLibraryAsync({
@@ -23,21 +42,21 @@ const pickFromGallery = async()=>{
 
                })
                console.log(data)
-       }
+       
        if(!data.cancelled){
         let newfile={
           uri:data.uri,
           type:`test/${data.uri.split(".")[1]}`,
-          name:`test/${data.uri.split(".")[1]}`
+          name:`test.${data.uri.split(".")[1]}`
          }
          handleUpload(newfile)
       }
-       else{
+      }  else{
            Alert.alert("you need to give permission to work")
        }
       }
 
-  const pickFromCamera = async()=>{
+  const pickFromCamera = async ()=>{
         const{granted}= await Permissions.askAsync(Permissions.CAMERA)
         if(granted){
               let data= await ImagePicker.launchCameraAsync({
@@ -47,22 +66,22 @@ const pickFromGallery = async()=>{
                  quality:0.5
  
                 })
-                console.log(data)
-        }
+               console.log(data)
+        
         if(!data.cancelled){
           let newfile={
             uri:data.uri,
             type:`test/${data.uri.split(".")[1]}`,
-            name:`test/${data.uri.split(".")[1]}`
+            name:`test.${data.uri.split(".")[1]}`
            }
            handleUpload(newfile)
         }
-        else{
+      }else{
             Alert.alert("you need to give permission to work")
         }
        }
  
-    const handleUpload   =(image)=>{
+    const handleUpload=(image)=>{
       const data=new FormData()
        data.append('file',image)
        data.append('upload_preset','employeeapp')
@@ -74,8 +93,10 @@ fetch("https://api.cloudinary.com/v1_1/anonymous-123/image/upload",{
  }).then(res=>res.json()).
     then(data=>{
       console.log(data)
-      
-      setdp(data.url)
+      setpicture(data.url)
+      setModal(false)
+    }).catch(err=>{
+      Alert.alert("error while uploading")
     })
   
 
@@ -117,10 +138,18 @@ return(
         mode="outlined"
         onChangeText={text => setSalary(text)}
       />
-
+ <TextInput
+                label='position'
+                style={styles.inputStyle}
+                value={position}
+                theme={theme}
+               // onFocus={()=>setenableShift(true)}
+                mode="outlined"
+                onChangeText={text =>setPosition(text)}
+            />
      <Button 
     style={styles.inputStyle}
-    icon={dp==""?"upload":"check"} 
+    icon={picture==""?"upload":"check"} 
      mode="contained" 
      theme = {theme}
      onPress = {() => setModal(true)}>
@@ -131,7 +160,7 @@ return(
     icon="content-save" 
      mode="contained" 
      theme = {theme}
-     onPress = {() => console.log("save")}>
+     onPress = {() => submitData()}>
               Save
       </Button>
 
