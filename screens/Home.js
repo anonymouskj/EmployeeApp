@@ -1,17 +1,29 @@
 import React,{useEffect,useState}from 'react';
-import { StyleSheet, Text, View ,Image,FlatList,ActivityIndicator} from 'react-native';
+import { StyleSheet, Text, View ,Image,FlatList, Alert} from 'react-native';
 import {Card,FAB} from 'react-native-paper'
 const Home=({navigation})=>{
      const [data,setData]=useState([])
      const[loading,setLoading]=useState(true)
-      useEffect(()=>{
 
-        fetch("http://d29d3d03.ngrok.io/")
-         .then(res=>res.json())
-         .then(results=>{
-             setData(results)
-             setLoading(false)
-         })
+
+     const fetchData=()=>{
+        fetch("http://a4a938cb.ngrok.io/")
+        .then(res=>res.json())
+        .then(results=>{
+            setData(results)
+            setLoading(false)
+        }).catch(err=>{
+            Alert.alert("something went wrong")
+        })
+
+     }
+
+
+
+
+      useEffect(()=>{
+        fetchData()
+      
       },[])
           const renderList = ((item)=>{
           return(
@@ -36,8 +48,7 @@ const Home=({navigation})=>{
      })
     return (
         <View style={{flex:1}}> 
-        {loading?<ActivityIndicator size="large" color="#0000ff"/>
-        :
+    
         <FlatList
         data={data}
         renderItem={({item})=>{
@@ -45,8 +56,10 @@ const Home=({navigation})=>{
             return  renderList(item)
         }}
             keyExtractor={item=>item._id}
+            onRefresh={()=>fetchData()}
+            refreshing={loading}
         />   
-        }
+        
            <FAB 
              
              onPress={()=>navigation.navigate("Create")}
